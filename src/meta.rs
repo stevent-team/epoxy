@@ -1,3 +1,5 @@
+use crate::database;
+
 pub struct Tag<'a> {
     property: &'a str,
     content: String,
@@ -9,27 +11,13 @@ impl Tag<'_> {
     }
 }
 
-pub struct EventDetails {
-  pub title: String,
-  pub description: String,
-  pub image_url: String,
-  pub start_time: String,
-  pub end_time: String,
-}
-
-pub struct ClubDetails {
-  pub title: String,
-  pub description: String,
-  pub image_url: String,
-}
-
-pub fn tags_from_event_details(details: EventDetails) -> Vec<Tag<'static>> {
+pub fn tags_from_event_details(details: database::EventDetails) -> Vec<Tag<'static>> {
   vec![
-    Tag { property: "og:title", content: details.title },
+    Tag { property: "og:title", content: details.name },
     Tag { property: "og:description", content: details.description },
     Tag { property: "og:image", content: details.image_url },
-    Tag { property: "event:start_time", content: details.start_time },
-    Tag { property: "event:end_time", content: details.end_time },
+    Tag { property: "event:start_time", content: details.start_date.to_string() },
+    Tag { property: "event:end_time", content: details.end_date.to_string() },
     Tag { property: "og:site_name", content: String::from("Stevent") },
     Tag { property: "og:type", content: String::from("events.event") },
     Tag { property: "twitter:card", content: String::from("summary_large_image") },
@@ -37,9 +25,9 @@ pub fn tags_from_event_details(details: EventDetails) -> Vec<Tag<'static>> {
   ]
 }
 
-pub fn tags_from_club_details(details: ClubDetails) -> Vec<Tag<'static>> {
+pub fn tags_from_club_details(details: database::ClubDetails) -> Vec<Tag<'static>> {
   vec![
-    Tag { property: "og:title", content: details.title },
+    Tag { property: "og:title", content: details.name },
     Tag { property: "og:description", content: details.description },
     Tag { property: "og:image", content: details.image_url },
     Tag { property: "og:site_name", content: String::from("Stevent") },

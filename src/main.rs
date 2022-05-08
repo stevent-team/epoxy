@@ -1,40 +1,33 @@
+use log::info;
 use actix_web::{web, Responder, App, HttpServer, HttpRequest, HttpResponse};
 use actix_web::dev::{ServiceRequest, ServiceResponse, fn_service};
 use actix_files::NamedFile;
 use actix_files as fs;
-use std::path::PathBuf;
 
 mod meta;
+mod database;
 
 async fn event(req: HttpRequest) -> impl Responder {
-    let path: PathBuf = req.match_info().query("eventid").parse().unwrap();
-    println!("Get event: {:?}", path);
+    let event_id: String = req.match_info().query("eventid").parse().unwrap();
+    info!("Add meta tags for event: {:?}", event_id);
     
-    // Create event details
-    let details = meta::EventDetails {
-        title: String::from("Test Event"),
-        description: String::from("A cool event you should go to"),
-        image_url: String::from("https://storage.googleapis.com/stevent-development-image-bucket/e6d3a632-d10e-49ab-bad5-b558ba58b163"),
-        start_time: String::from("2022-05-08T06:40:52"),
-        end_time: String::from("2022-05-08T06:40:52"),
-    };
+    // Get event details from DB
+    let details = database::query_event_details(event_id).await.expect("Failed to fetch event from DB");
 
+    // Respond with augmented index
     HttpResponse::Ok()
         .content_type("text/html")
         .body(meta::index_with_meta_tags(meta::tags_from_event_details(details)))
 }
 
 async fn club(req: HttpRequest) -> impl Responder {
-    let path: PathBuf = req.match_info().query("clubid").parse().unwrap();
-    println!("Get club: {:?}", path);
+    let club_id: String = req.match_info().query("clubid").parse().unwrap();
+    info!("Add meta tags for club: {:?}", club_id);
     
-    // Create event details
-    let details = meta::ClubDetails {
-        title: String::from("Test Event"),
-        description: String::from("A cool event you should go to"),
-        image_url: String::from("https://storage.googleapis.com/stevent-development-image-bucket/e6d3a632-d10e-49ab-bad5-b558ba58b163"),
-    };
+    // Get event details from DB
+    let details = database::query_club_details(club_id).await.expect("Failed to fetch club from DB");
 
+    // Respond with augmented index
     HttpResponse::Ok()
         .content_type("text/html")
         .body(meta::index_with_meta_tags(meta::tags_from_club_details(details)))
@@ -42,6 +35,10 @@ async fn club(req: HttpRequest) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // Init logger
+    env_logger::init();
+
+    // Start http server
     HttpServer::new(|| {
         App::new()
             /* Route event detail requests */
