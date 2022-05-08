@@ -25,14 +25,12 @@ cargo watch -x 'run'
 ```
 
 ## Current Meta Tags
-```
-- "og:title"
-- "og:description"
-- "og:image"
-- "event:start_time"
-- "event:end_time"
-- "og:site_name"
-- "og:type"
-- "twitter:card"
-- "theme-color"
-```
+- `og:title`
+- `og:description`
+- `og:image`
+- `event:start_time`
+- `event:end_time`
+- `og:site_name`
+- `og:type`
+- `twitter:card`
+- `theme-color`
