@@ -39,6 +39,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     // Start http server
+    println!("Starting http server on port 8080...");
     HttpServer::new(|| {
         App::new()
             /* Route event detail requests */
@@ -59,7 +60,7 @@ async fn main() -> std::io::Result<()> {
                     Ok(ServiceResponse::new(req, res))
                 })))
     })
-    .bind(("localhost", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
