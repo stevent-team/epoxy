@@ -5,7 +5,6 @@
     "strict": true,
     "lib": ["esnext"],
     "esModuleInterop": true,
-    "baseUrl": "src",
     "noImplicitAny": false
   }
 }

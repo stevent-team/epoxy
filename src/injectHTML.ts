@@ -1,4 +1,4 @@
-import { Injection } from 'server'
+import { Injection } from './server'
 
 // Inject strings into specific places in the html
 const injectHTML = (htmlText: string, { head, body }: Injection): string => {

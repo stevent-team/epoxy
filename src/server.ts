@@ -3,12 +3,12 @@ import express, { Request } from 'express'
 import cors from 'cors'
 import { promises as fs } from 'fs'
 
-import injectHTML from 'injectHTML'
+import injectHTML from './injectHTML'
 
 export type Injection = { head: string, body: string }
 export type RouteHandler = (req: Request) => Injection
 export type Routes = {
-  [key: string]: RouteHandler
+  [route: string]: RouteHandler
 }
 
 const startServer = async ({

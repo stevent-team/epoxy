@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import yargs from 'yargs'
-
-import loadRoutes from 'loadRoutes'
-import startServer, { Routes } from 'server'
 import path from 'path'
+
+import loadRoutes from './src/loadRoutes'
+import startServer, { Routes } from './src/server'
 
 const serve = async ({ target, routeFile, host, port, index }) => {
   // Load routes
