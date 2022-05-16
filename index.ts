@@ -1,20 +1,25 @@
 #!/usr/bin/env node
 import yargs from 'yargs'
 
-import { loadRoutesFile } from 'routes'
-import startServer from 'server'
+import loadRoutes from 'loadRoutes'
+import startServer, { Routes } from 'server'
 import path from 'path'
 
-const serve = async ({ target, routes, host, port, index }) => {
+const serve = async ({ target, routeFile, host, port, index }) => {
   // Load routes
-  const resolvedRoutes = routes ? path.resolve(__dirname, routes) : ''
-  const routesMap = routes ? (await loadRoutesFile(resolvedRoutes)
-    .catch(() => { throw new Error(`Failed to load routes file: ${resolvedRoutes}`) })) : {}
+  let routes: Routes = {}
+  if (routeFile) {
+    const resolvedRoutes = path.resolve(__dirname, routeFile)
+    routes = await loadRoutes(resolvedRoutes).catch(() => {
+      throw new Error(`Failed to load routes file: ${resolvedRoutes}`)
+    })
+  }
 
-  if (!Object.keys(routesMap)?.length) {
+  const routeCount = Object.keys(routes)?.length ?? 0
+  if (routeCount === 0) {
     console.warn('No dynamic routes configured')
   } else {
-    console.log(`🪴  Configured ${Object.keys(routesMap).length} dynamic route(s)`)
+    console.log(`🪴  Configured ${routeCount} dynamic route${routeCount !== 1 ? 's' : ''}`)
   }
 
   // Start server
@@ -22,19 +27,23 @@ const serve = async ({ target, routes, host, port, index }) => {
     host,
     port,
     target,
-    routes: routesMap,
+    routes,
     index: path.join(target, index),
   })
 }
 
+// Use yargs to parse command line options
 yargs
   .scriptName("epoxy")
-  .usage('$0 serve <target> [routes] [options]')
-  .command(['serve <target> [routes]', '$0 <target>'], 'Serve the provided static folder', (yargs) => {
-    yargs
+  .usage('$0 serve <target> [routeFile] [options]')
+  .command(
+    ['serve <target> [routeFile]', '$0 <target> [routeFile]'],
+    'Serve the provided static folder',
+    yargs => yargs
       .positional('target', { describe: 'Path to static directory', require: true })
-      .positional('routes', { describe: 'Path to routes script' })
-  }, serve)
+      .positional('routeFile', { describe: 'Path to router script' }),
+    serve
+  )
   .option('port', {
     alias: 'p',
     type: 'string',

@@ -5,7 +5,6 @@
   "repository": "https://github.com/stevent-team/epoxy",
   "author": "Stevent",
   "license": "MIT",
-  "private": false,
   "bin": "./dist/index.js",
   "main": "./dist/index.js",
   "source": "./index.ts",

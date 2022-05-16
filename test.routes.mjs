@@ -3,5 +3,5 @@ const eventDetailRoute = async (req) => {
 }
 
 export default {
-  '/event/:eventid': eventDetailRoute,
+  '/events/:eventid': eventDetailRoute,
 }
