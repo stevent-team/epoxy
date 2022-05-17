@@ -9,7 +9,7 @@ A function that will help create meta tags based on an object
 ### Example
 
 ```js
-import { createMeta } from 'epoxy/helpers'
+import { createMeta } from '@stevent/epoxy/helpers'
 
 const meta = {
   'og:title': 'My Page',

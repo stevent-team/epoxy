@@ -1,13 +1,24 @@
 {
-  "name": "epoxy",
+  "name": "@stevent/epoxy",
   "version": "1.0.0",
   "description": "Lightweight server-side per-route html injection",
+  "keywords": [
+    "epoxy",
+    "injection",
+    "react",
+    "ssr"
+  ],
   "repository": "https://github.com/stevent-team/epoxy",
   "author": "Stevent",
   "license": "MIT",
-  "bin": "./dist/index.js",
+  "bin": {
+    "epoxy": "./dist/index.js"
+  },
   "main": "./dist/index.js",
   "source": "./index.ts",
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
     "build": "parcel build"
   },

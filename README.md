@@ -61,7 +61,7 @@ export default {
   > Epoxy comes with a helper that allows you to easily create meta tags from an object.
   >
   > ```js
-  > import { createMeta } from 'epoxy/helpers'
+  > import { createMeta } from '@stevent/epoxy/helpers'
   >
   > const routeHandler = async ({ params }) => {
   >   // Create a string of meta tags from the object passed in
