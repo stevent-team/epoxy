@@ -53,6 +53,34 @@ export default {
 }
 ```
 
+<details>
+  <summary>See an example using the `createMeta` helper</summary>
+
+  > ### `createMeta` Helper
+  >
+  > Epoxy comes with a helper that allows you to easily create meta tags from an object.
+  >
+  > ```js
+  > import { createMeta } from 'epoxy/helpers'
+  >
+  > const routeHandler = async ({ params }) => {
+  >   // Create a string of meta tags from the object passed in
+  >   const metaTags = createMeta({
+  >     coolness: params.coolness,
+  >     description: 'A pretty cool page',
+  >   })
+  >
+  >   return { head: metaTags }
+  > }
+  >
+  > export default {
+  >   '/route/:coolness': routeHandler
+  > }
+  > ```
+  >
+  > For more information about the helpers available in Epoxy, see the [readme](./helpers/README.md).
+</details>
+
 Then serve your static directory and dynamic routes!
 
 ```bash
