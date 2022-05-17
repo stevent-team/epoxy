@@ -10,8 +10,8 @@ const serve = async ({ target, routeFile, host, port, index }) => {
   let routes: Routes = {}
   if (routeFile) {
     const resolvedRoutes = path.resolve(__dirname, routeFile)
-    routes = await loadRoutes(resolvedRoutes).catch(() => {
-      throw new Error(`Failed to load routes file: ${resolvedRoutes}`)
+    routes = await loadRoutes(resolvedRoutes).catch(e => {
+      throw new Error(`Failed to load routes file "${resolvedRoutes}": ${e}`)
     })
   }
 

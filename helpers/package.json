@@ -12,6 +12,10 @@
     "url": "https://github.com/stevent-team/epoxy.git",
     "directory": "helpers"
   },
+  "exports": {
+    ".": "./dist/index.js",
+    "./helpers": "./helpers/dist/index.js"
+  },
   "scripts": {
     "build": "parcel build"
   },
