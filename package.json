@@ -1,6 +1,6 @@
 {
   "name": "@stevent-team/epoxy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lightweight server-side per-route html injection",
   "keywords": [
     "epoxy",
