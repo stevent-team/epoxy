@@ -19,6 +19,10 @@
   "engines": {
     "node": ">=10"
   },
+  "exports": {
+    ".": "./dist/index.js",
+    "./helpers": "./helpers/dist/index.js"
+  },
   "scripts": {
     "build": "parcel build"
   },
