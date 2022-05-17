@@ -19,8 +19,8 @@ const startServer = async ({
   routes,
 }) => {
   // Resolve paths
-  const resolvedTarget = path.resolve(__dirname, target)
-  const resolvedIndex = path.resolve(__dirname, index)
+  const resolvedTarget = path.resolve(target)
+  const resolvedIndex = path.resolve(index)
 
   // Read index
   const indexText = await fs.readFile(resolvedIndex, 'utf-8').catch((e) => {
