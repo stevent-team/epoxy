@@ -51,7 +51,7 @@ const startServer = async ({
 
   // Start server
   app.listen(port, () => {
-    console.log(`🪣  Epoxy is serving your app at http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)
+    console.log(`🪣  Epoxy is serving your app at http://${host}:${port}`)
   })
 }
 
