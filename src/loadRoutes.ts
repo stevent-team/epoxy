@@ -11,6 +11,7 @@ const loadRoutes = async (routeFile: string) => {
     defaultConfig: '@parcel/config-default',
     mode: 'production',
     shouldDisableCache: true,
+    cacheDir: path.resolve(__dirname, '../routes/.parcel-cache'),
     targets: {
       'main': {
         context: 'node',
