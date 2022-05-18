@@ -27,7 +27,7 @@ const loadRoutes = async (routeFile: string) => {
     }
   })
 
-  // Build
+  // Build routes configuration
   const { bundleGraph, buildTime } = await bundler.run()
   console.log(`✨ Built routes file in ${buildTime}ms`)
 
