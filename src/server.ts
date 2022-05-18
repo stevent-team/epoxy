@@ -6,7 +6,7 @@ import { promises as fs } from 'fs'
 import injectHTML from './injectHTML'
 
 export type Injection = { head: string, body: string }
-export type RouteHandler = (req: Request) => Injection
+export type RouteHandler = (req: Request) => Promise<Injection>
 export type Routes = {
   [route: string]: RouteHandler
 }
@@ -34,7 +34,11 @@ const startServer = async ({
   // Register dynamic routes
   Object.entries(routes as Routes).forEach(([route, handler]) => {
     app.get(route, async (req, res) => {
-      const injectedIndex = injectHTML(indexText, await handler(req))
+      const handlerResult = await handler(req)
+        .catch(e => console.warn(`Handler for route ${route} threw an error`, e))
+      const injectedIndex = handlerResult
+        ? injectHTML(indexText, handlerResult)
+        : indexText
       return res
         .header('Content-Type', 'text/html')
         .send(injectedIndex)
