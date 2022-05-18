@@ -35,7 +35,7 @@ Options:
 
 ## Example
 
-Create a script to define your dynamic routes. *(requires .mjs extension)*
+Create a script to define your dynamic routes.
 
 ```js
 // Handlers are async functions returning HTML to be injected
@@ -84,7 +84,7 @@ export default {
 Then serve your static directory and dynamic routes!
 
 ```bash
-epoxy ./dist ./routes.mjs
+epoxy ./dist ./routes.js
 ```
 
 or setup an npm script
@@ -93,14 +93,14 @@ or setup an npm script
 // package.json
 {
   "scripts": {
-    "serve": "epoxy ./dist ./routes.mjs"
+    "serve": "epoxy ./dist ./routes.js"
   }
 }
 ```
 
 ## API
 
-Your route handler must be a javascript module (i.e. have the file extension `mjs`) so that it can be imported and used by Epoxy. It also has to export a default object with the structure:
+Your route handler will be built by Epoxy using Parcel when Epoxy is started. It also has to export a default object with the structure:
 
 ```js
 export default {
