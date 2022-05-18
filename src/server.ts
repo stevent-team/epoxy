@@ -6,7 +6,7 @@ import { promises as fs } from 'fs'
 import injectHTML from './injectHTML'
 
 export type Injection = { head: string, body: string }
-export type RouteHandler = (req: Request) => Injection
+export type RouteHandler = (req: Request) => Promise<Injection>
 export type Routes = {
   [route: string]: RouteHandler
 }
