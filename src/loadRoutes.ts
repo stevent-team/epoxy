@@ -1,21 +1,23 @@
-import path from 'path'
-import { Parcel } from '@parcel/core'
+import { Parcel, createWorkerFarm } from '@parcel/core'
+import { MemoryFS } from '@parcel/fs'
+import requireFromString from 'require-from-string'
 
 // Compile the routes file, then import it
 const loadRoutes = async (routeFile: string) => {
-  const distDir = path.resolve(__dirname, '../routes/')
-
-  // Setup bundler
+  // Setup bundler using memory file system
+  const workerFarm = createWorkerFarm()
+  const outputFS = new MemoryFS(workerFarm)
   const bundler = new Parcel({
+    workerFarm,
+    outputFS,
     entries: routeFile,
     defaultConfig: '@parcel/config-default',
     mode: 'production',
     shouldDisableCache: true,
-    cacheDir: path.resolve(__dirname, '../routes/.parcel-cache'),
     targets: {
       'main': {
         context: 'node',
-        distDir,
+        distDir: 'dist',
         engines: {
           node: ">=10"
         },
@@ -26,12 +28,14 @@ const loadRoutes = async (routeFile: string) => {
   })
 
   // Build
-  const { buildTime } = await bundler.run()
+  const { bundleGraph, buildTime } = await bundler.run()
   console.log(`✨ Built routes file in ${buildTime}ms`)
 
-  // Import
-  const module = await import(path.resolve(distDir, path.basename(routeFile)))
-  return module?.default?.default ?? module?.default
+  const [bundle] = bundleGraph.getBundles()
+
+  // Require from string
+  const module = requireFromString(await outputFS.readFile(bundle.filePath, 'utf8'))
+  return module.default
 }
 
 export default loadRoutes
