@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: yarn install --immutable
+      - run: yarn install --immutable && yarn --cwd helpers install --immutable
       - run: yarn build:ci
         name: Build
       # TODO: Testing
