@@ -24,7 +24,8 @@
     "./helpers": "./helpers/dist/index.js"
   },
   "scripts": {
-    "build": "parcel build"
+    "build": "parcel build",
+    "build:ci": "yarn build && yarn --cwd helpers build"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
