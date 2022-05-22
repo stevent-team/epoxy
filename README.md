@@ -120,13 +120,13 @@ If you have a deployment that will need to start and stop your Epoxy server ofte
 // package.json
 {
   "scripts": {
-    "build": "epoxy ./routes.js",
+    "build": "epoxy build ./routes.js",
     "serve": "epoxy ./dist ./dist/routes.js"
   }
 }
 ```
 
-Alternatively, you could also write your routes file in CommonJS so it doesn't require building.
+Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy serve` command only build if the flag `--build` is specified.
 
 ## API
 
