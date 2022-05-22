@@ -19,11 +19,13 @@ yarn add @stevent-team/epoxy
 
 You can also run `npx epoxy --help` to see this information.
 
+#### `epoxy serve` or `epoxy`
+
 ```
 epoxy <target> [routeFile] [options]
 
 target     Path to static directory
-routeFile  Path to router script
+routeFile  Path to cjs router script (can use ES6 with --build option)
 
 Options:
       --help     Show help                                                     [boolean]
@@ -31,6 +33,20 @@ Options:
   -p, --port     port to use for http server                    [string] [default: 8080]
   -h, --host     host to use for http server               [string] [default: "0.0.0.0"]
   -i, --index    path to index html inside of target    [string] [default: "index.html"]
+  -b, --build    build routes file in memory                  [boolean] [default: false]
+```
+
+#### `epoxy build`
+
+```
+epoxy build <routeFile>
+
+routeFile  Path to ES6 router script
+
+Options:
+      --help       Show help                                                 [boolean]
+      --version    Show version number                                       [boolean]
+  -o, --outputDir  folder to output built routes file       [string] [default: "dist"]
 ```
 
 ## Example
@@ -84,19 +100,33 @@ export default {
 Then serve your static directory and dynamic routes!
 
 ```bash
-epoxy ./dist ./routes.js
+epoxy ./dist ./routes.js --build
 ```
 
 or setup an npm script
 
-```js
+```json
 // package.json
 {
   "scripts": {
-    "serve": "epoxy ./dist ./routes.js"
+    "serve": "epoxy ./dist ./routes.js --build"
   }
 }
 ```
+
+If you have a deployment that will need to start and stop your Epoxy server often, such as an automatically scaled deployment like Google App Engine, then you can prebuild the routes file so it doesn't have to build before every start:
+
+```json
+// package.json
+{
+  "scripts": {
+    "build": "epoxy build ./routes.js",
+    "serve": "epoxy ./dist ./dist/routes.js"
+  }
+}
+```
+
+Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy serve` command only build if the flag `--build` is specified.
 
 ## API
 
