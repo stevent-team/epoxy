@@ -38,6 +38,7 @@
     "@parcel/fs": "^2.5.0",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "keyv": "^4.3.2",
     "parcel": "^2.5.0",
     "require-from-string": "^2.0.2",
     "yargs": "^17.5.1"

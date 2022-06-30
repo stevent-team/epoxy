@@ -4,15 +4,13 @@ import cors from 'cors'
 import { promises as fs } from 'fs'
 
 import injectHTML from './injectHTML'
+import cache from './cache'
 
 export type Injection = { head: string, body: string }
 export type RouteHandler = (req: Request) => Promise<Injection>
-export type RouteObject = { handler: RouteHandler, key?: any }
+export type RouteObject = { handler: RouteHandler, key?: any, ttl?: number }
 export type RouteValue = RouteHandler | RouteObject
 export type Routes = { [route: string]: RouteValue }
-
-// TODO: use a more robust cache storage
-const cache = {}
 
 // Take the route object and return a handler and optional key
 const getRouteObject: (value: RouteValue) => Promise<RouteObject> = async value => {
@@ -33,20 +31,21 @@ const resolveHandler = async (
   value: RouteValue,
   indexText: string,
 ) => {
-  const { handler, key } = await getRouteObject(value)
+  const { handler, key, ttl } = await getRouteObject(value)
 
   const resolvedKey = await resolveKey(key, req)
   const keyValue = resolvedKey && `${route}-${JSON.stringify(resolvedKey)}`
 
-  if (keyValue && cache[keyValue]) {
-    return cache[keyValue] ? injectHTML(indexText, cache[keyValue]) : indexText
+  const cachedResult = keyValue && await cache.get(keyValue)
+  if (cachedResult) {
+    return injectHTML(indexText, cachedResult)
   } else {
     const handlerResult = await handler(req)
       .catch(e => console.warn(`Handler for route ${route} threw an error`, e))
 
     // Save result in cache if key set
-    if (keyValue) {
-      cache[keyValue] = handlerResult
+    if (keyValue && handlerResult) {
+      await cache.set(keyValue, handlerResult, ttl)
     }
 
     return handlerResult ? injectHTML(indexText, handlerResult) : indexText
