@@ -7,8 +7,50 @@ import injectHTML from './injectHTML'
 
 export type Injection = { head: string, body: string }
 export type RouteHandler = (req: Request) => Promise<Injection>
-export type Routes = {
-  [route: string]: RouteHandler
+export type RouteObject = { handler: RouteHandler, key?: any }
+export type RouteValue = RouteHandler | RouteObject
+export type Routes = { [route: string]: RouteValue }
+
+// TODO: use a more robust cache storage
+const cache = {}
+
+// Take the route object and return a handler and optional key
+const getRouteObject: (value: RouteValue) => Promise<RouteObject> = async value => {
+  if (typeof value === 'function') return { handler: value }
+  return value
+}
+
+// Take a key that could be a string or function, and resolve to a string
+const resolveKey = async (key, req) => {
+  if (typeof key === 'function') return key(req)
+  return key
+}
+
+// Given a route, resolve the handler or serve the cached handler
+const resolveHandler = async (
+  route: string,
+  req: Request,
+  value: RouteValue,
+  indexText: string,
+) => {
+  const { handler, key } = await getRouteObject(value)
+
+  const resolvedKey = await resolveKey(key, req)
+  const keyValue = resolvedKey && `${route}-${JSON.stringify(resolvedKey)}`
+
+  if (keyValue && cache[keyValue]) {
+    return cache[keyValue] ? injectHTML(indexText, cache[keyValue]) : indexText
+  } else {
+    const handlerResult = await handler(req)
+      .catch(e => console.warn(`Handler for route ${route} threw an error`, e))
+
+    // Save result in cache if key set
+    if (keyValue) {
+      cache[keyValue] = handlerResult
+    }
+
+    return handlerResult ? injectHTML(indexText, handlerResult) : indexText
+  }
 }
 
 const startServer = async ({
@@ -32,16 +74,10 @@ const startServer = async ({
   app.use(cors())
 
   // Register dynamic routes
-  Object.entries(routes as Routes).forEach(([route, handler]) => {
+  Object.entries(routes as Routes).forEach(([route, value]) => {
     app.get(route, async (req, res) => {
-      const handlerResult = await handler(req)
-        .catch(e => console.warn(`Handler for route ${route} threw an error`, e))
-      const injectedIndex = handlerResult
-        ? injectHTML(indexText, handlerResult)
-        : indexText
-      return res
-        .header('Content-Type', 'text/html')
-        .send(injectedIndex)
+      const injectedIndex = await resolveHandler(route, req, value, indexText)
+      return res.header('Content-Type', 'text/html').send(injectedIndex)
     })
   })
 
