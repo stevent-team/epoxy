@@ -30,13 +30,14 @@ const applyHandler = async (
   req: Request,
   value: RouteHandler,
   indexText: string,
+  cacheEnabled: boolean,
 ) => {
   const { handler, key, ttl } = await routeHandlerAsObject(value)
 
   const resolvedKey = await resolveKey(key, req)
   const keyValue = resolvedKey && `${route}-${JSON.stringify(resolvedKey)}`
 
-  const cachedResult = keyValue && await cache.get(keyValue)
+  const cachedResult = cacheEnabled && keyValue && await cache.get(keyValue)
   if (cachedResult) {
     return injectHTML(indexText, cachedResult)
   } else {
@@ -44,7 +45,7 @@ const applyHandler = async (
       .catch(e => console.warn(`Handler for route ${route} threw an error`, e))
 
     // Save result in cache if key set
-    if (keyValue && handlerResult) {
+    if (cacheEnabled && keyValue && handlerResult) {
       await cache.set(keyValue, handlerResult, ttl)
     }
 
@@ -58,6 +59,7 @@ const startServer = async ({
   index = './dist/index.html',
   port,
   routes,
+  cache = true,
 }) => {
   // Resolve paths
   const resolvedTarget = path.resolve(target)
@@ -75,7 +77,7 @@ const startServer = async ({
   // Register dynamic routes
   Object.entries(routes as Routes).forEach(([route, handler]) => {
     app.get(route, async (req, res) => {
-      const injectedIndex = await applyHandler(route, req, handler, indexText)
+      const injectedIndex = await applyHandler(route, req, handler, indexText, cache)
       return res.header('Content-Type', 'text/html').send(injectedIndex)
     })
   })
