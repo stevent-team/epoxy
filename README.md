@@ -28,12 +28,13 @@ target     Path to static directory
 routeFile  Path to cjs router script (can use ES6 with --build option)
 
 Options:
-      --help     Show help                                                     [boolean]
-      --version  Show version number                                           [boolean]
-  -p, --port     port to use for http server                    [string] [default: 8080]
-  -h, --host     host to use for http server               [string] [default: "0.0.0.0"]
-  -i, --index    path to index html inside of target    [string] [default: "index.html"]
-  -b, --build    build routes file in memory                  [boolean] [default: false]
+      --help     Show help                                                    [boolean]
+      --version  Show version number                                          [boolean]
+  -p, --port     port to use for http server                   [string] [default: 8080]
+  -h, --host     host to use for http server              [string] [default: "0.0.0.0"]
+  -i, --index    path to index html inside of target   [string] [default: "index.html"]
+  -b, --build    build routes file in memory                 [boolean] [default: false]
+      --cache    use --no-cache to disable all route caching  [boolean] [default: true]
 ```
 
 #### `epoxy build`
@@ -136,7 +137,19 @@ Your route handler will be built by Epoxy using Parcel when Epoxy is started. It
 export default {
   'express/js/route/:withParams': yourRouteHandlerFunction
 }
+
+// or
+
+export default {
+  'express/js/route/:withParams': {
+    handler: yourRouteHandlerFunction,
+    key: request => ['A key to cache with', request.params.withParams], // optional, any type, will cache result based on key
+    ttl: 3600000, // time to live, optional, in milliseconds
+  }
+}
 ```
+
+If you include a `key` that is not undefined, then the result of the handler function will be cached based on that key. You can also include a time to live `ttl` parameter which will expire the cache after a certain amount of milliseconds. There is also a command line argument `--no-cache` that will disable all caching irrespective of any keys provided.
 
 Each route must have a function to handle it, which will receive a `request` object from ExpressJS, from which you can learn about the request. See the express docs for the [request object](https://expressjs.com/en/api.html#req) for more information.
 
