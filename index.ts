@@ -6,7 +6,7 @@ import { Parcel } from '@parcel/core'
 import loadRoutes from './src/loadRoutes'
 import startServer, { Routes } from './src/server'
 
-const serve = async ({ target, routeFile, host, port, index, build }) => {
+const serve = async ({ target, routeFile, host, port, index, build, cache }) => {
   // Load routes
   let routes: Routes = {}
   if (routeFile) {
@@ -30,6 +30,7 @@ const serve = async ({ target, routeFile, host, port, index, build }) => {
     target,
     routes,
     index: path.join(target, index),
+    cache,
   })
 }
 
@@ -91,6 +92,11 @@ yargs
         type: 'boolean',
         description: 'build routes file in memory',
         default: false,
+      })
+      .option('cache', {
+        type: 'boolean',
+        description: 'use --no-cache to disable all route handler result caching',
+        default: true,
       }),
     serve
   )
