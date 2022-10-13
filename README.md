@@ -1,5 +1,8 @@
 # 🪣 Epoxy
 
+[![npm version](https://img.shields.io/npm/v/@stevent-team/epoxy)](https://www.npmjs.com/package/@stevent-team/epoxy)
+[![minzip size](https://img.shields.io/bundlephobia/minzip/@stevent-team/epoxy)](https://bundlephobia.com/package/@stevent-team/epoxy)
+
 Simple server-side per-route html injection
 
 ## Purpose
@@ -163,6 +166,8 @@ Each route must have a function to handle it, which will receive a `request` obj
 ## Contributing
 
 PRs and Issues are more than welcome :)
+
+This library uses [changesets](https://github.com/changesets/changesets). If the changes you've made would constitute a version bump, run `yarn changeset` and follow the prompts to document the changes you've made. Changesets are consumed on releases, and used to generate a changelog and bump version number.
 
 ## License
 
