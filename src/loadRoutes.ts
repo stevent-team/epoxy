@@ -15,17 +15,18 @@ const loadRoutes = async (routeFile: string, build: boolean) => {
   const result = await esbuild.build({
     entryPoints: [routeFile],
     platform: 'node',
-    outdir: 'out',
+    outdir: '.',
     bundle: true,
     format: 'cjs',
     external: ['./node_modules/*'],
     target: 'node16',
     write: false,
+    allowOverwrite: true,
   })
   console.log(`✨ Built routes file to memory in ${new Date().getTime() - startTime}ms`)
 
   // Require from string
-  const module = requireFromString(Buffer.from(result.outputFiles[0].contents).toString())
+  const module = requireFromString(result.outputFiles[0].text)
   return module.default
 }
 
