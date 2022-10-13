@@ -26,7 +26,7 @@
     "./helpers": "./helpers/dist/index.js"
   },
   "scripts": {
-    "build": "tsc -d --emitDeclarationOnly --declarationMap --skipLibCheck --resolveJsonModule --outDir dist && esbuild index.ts --platform=node --target=node16 --format=esm --bundle --sourcemap --external:./node_modules/* --outfile=dist/index.js",
+    "build": "tsc -d --emitDeclarationOnly --declarationMap --skipLibCheck --resolveJsonModule --outDir dist && esbuild index.ts --platform=node --target=node16 --format=esm --bundle --sourcemap --external:commander --external:cors --external:esbuild --external:express --external:keyv --external:require-from-string --outfile=dist/index.js",
     "build:ci": "yarn build && yarn --cwd helpers build"
   },
   "devDependencies": {

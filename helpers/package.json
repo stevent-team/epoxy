@@ -13,7 +13,7 @@
     "directory": "helpers"
   },
   "scripts": {
-    "build": "tsc -d --emitDeclarationOnly --declarationMap --outDir dist && esbuild index.ts --platform=node --target=node16 --format=cjs --bundle --sourcemap --external:./node_modules/* --outfile=dist/index.js"
+    "build": "tsc -d --emitDeclarationOnly --declarationMap --outDir dist && esbuild index.ts --platform=node --target=node16 --format=cjs --bundle --sourcemap --outfile=dist/index.js"
   },
   "devDependencies": {
     "esbuild": "^0.15.10",
