@@ -7,6 +7,8 @@ Simple server-side per-route html injection
 Epoxy allows for running middleware on select HTTP routes that inject HTML into the served content.
 Simply point it at a static directory, define some routes in a script and you're off to the races! :horse:
 
+Epoxy comes with `esbuild`, which is used for transpiling a route handler file.
+
 ## Usage
 
 Add as a dependency
@@ -19,35 +21,40 @@ yarn add @stevent-team/epoxy
 
 You can also run `npx epoxy --help` to see this information.
 
-#### `epoxy serve` or `epoxy`
+#### `epoxy`
 
 ```
-epoxy <target> [routeFile] [options]
+Usage: epoxy <target> [routeFile] [options]
 
-target     Path to static directory
-routeFile  Path to cjs router script (can use ES6 with --build option)
+Serve the provided static folder
+
+Arguments:
+  target                 Path to static directory
+  routeFile              Path to cjs router script (can use ES6 with --build option)
 
 Options:
-      --help     Show help                                                    [boolean]
-      --version  Show version number                                          [boolean]
-  -p, --port     port to use for http server                   [string] [default: 8080]
-  -h, --host     host to use for http server              [string] [default: "0.0.0.0"]
-  -i, --index    path to index html inside of target   [string] [default: "index.html"]
-  -b, --build    build routes file in memory                 [boolean] [default: false]
-      --cache    use --no-cache to disable all route caching  [boolean] [default: true]
+  -V, --version          output the version number
+  -p, --port <port>      port to use for http server (default: 8080)
+  -h, --host <url>       host to use for http server (default: "0.0.0.0")
+  -i, --index <path>     path to index html inside of target (default: "index.html")
+  -b, --build            build routes file in memory (default: false)
+  --no-cache             disable all route handler result caching
+  --help                 display help for command
 ```
 
 #### `epoxy build`
 
 ```
-epoxy build <routeFile>
+Usage: epoxy build <routeFile> [options]
 
-routeFile  Path to ES6 router script
+Build a routes file
+
+Arguments:
+  routeFile                Path to ES6 router script
 
 Options:
-      --help       Show help                                                 [boolean]
-      --version    Show version number                                       [boolean]
-  -o, --outputDir  folder to output built routes file       [string] [default: "dist"]
+  -o, --outputDir <path>   folder to output built routes file (default: "dist")
+  -h, --help               display help for command
 ```
 
 ## Example
@@ -127,7 +134,7 @@ If you have a deployment that will need to start and stop your Epoxy server ofte
 }
 ```
 
-Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy serve` command only build if the flag `--build` is specified.
+Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy` command only builds if the flag `--build` is specified.
 
 ## API
 
