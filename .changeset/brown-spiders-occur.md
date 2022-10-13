@@ -1,5 +1,5 @@
 ---
-"@stevent-team/epoxy": minor
+"@stevent-team/epoxy": patch
 ---
 
-Switched from parcel to esbuild for transpiling routes and package. Also swapped out the argument parser for the cli functionality. Added changesets for versioning.
+Switched from parcel to esbuild for transpiling routes and package
