@@ -1,5 +1,16 @@
 # @stevent-team/epoxy
 
+## 2.2.0
+
+### Minor Changes
+
+- 6a9fbfb: **Breaking:** Swapped out the cli argument parser from `yargs` to `commander`. `epoxy serve` is no longer a valid command. Use `epoxy` instead.
+
+### Patch Changes
+
+- e70a138: Switched from parcel to esbuild for transpiling routes and package
+- 6a9fbfb: Add changesets for versioning
+
 ## 2.1.0
 
 ### Minor Changes
