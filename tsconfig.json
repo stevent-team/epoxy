@@ -5,6 +5,7 @@
     "strict": true,
     "lib": ["esnext"],
     "esModuleInterop": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "resolveJsonModule": true
   }
 }

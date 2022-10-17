@@ -1,5 +1,4 @@
-import { Parcel, createWorkerFarm } from '@parcel/core'
-import { MemoryFS } from '@parcel/fs'
+import esbuild from 'esbuild'
 import requireFromString from 'require-from-string'
 
 // Compile the routes file, then import it
@@ -11,37 +10,23 @@ const loadRoutes = async (routeFile: string, build: boolean) => {
     return module.default?.default ?? module.default
   }
 
-  // Setup bundler using memory file system
-  const workerFarm = createWorkerFarm()
-  const outputFS = new MemoryFS(workerFarm)
-  const bundler = new Parcel({
-    workerFarm,
-    outputFS,
-    entries: routeFile,
-    defaultConfig: '@parcel/config-default',
-    mode: 'production',
-    shouldDisableCache: true,
-    targets: {
-      'main': {
-        context: 'node',
-        distDir: 'dist',
-        engines: {
-          node: ">=10"
-        },
-        scopeHoist: false,
-        optimize: false,
-      }
-    }
+  // Build to memory
+  const startTime = new Date().getTime()
+  const result = await esbuild.build({
+    entryPoints: [routeFile],
+    platform: 'node',
+    outdir: '.',
+    bundle: true,
+    format: 'cjs',
+    external: ['./node_modules/*'],
+    target: 'node16',
+    write: false,
+    allowOverwrite: true,
   })
-
-  // Build routes configuration
-  const { bundleGraph, buildTime } = await bundler.run()
-  console.log(`✨ Built routes file to memory in ${buildTime}ms`)
-
-  const [bundle] = bundleGraph.getBundles()
+  console.log(`✨ Built routes file to memory in ${new Date().getTime() - startTime}ms`)
 
   // Require from string
-  const module = requireFromString(await outputFS.readFile(bundle.filePath, 'utf8'))
+  const module = requireFromString(result.outputFiles[0].text)
   return module.default
 }
 

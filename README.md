@@ -1,11 +1,16 @@
 # 🪣 Epoxy
 
+[![npm version](https://img.shields.io/npm/v/@stevent-team/epoxy)](https://www.npmjs.com/package/@stevent-team/epoxy)
+[![minzip size](https://img.shields.io/bundlephobia/minzip/@stevent-team/epoxy)](https://bundlephobia.com/package/@stevent-team/epoxy)
+
 Simple server-side per-route html injection
 
 ## Purpose
 
 Epoxy allows for running middleware on select HTTP routes that inject HTML into the served content.
 Simply point it at a static directory, define some routes in a script and you're off to the races! :horse:
+
+Epoxy comes with `esbuild`, which is used for transpiling a route handler file.
 
 ## Usage
 
@@ -19,35 +24,40 @@ yarn add @stevent-team/epoxy
 
 You can also run `npx epoxy --help` to see this information.
 
-#### `epoxy serve` or `epoxy`
+#### `epoxy`
 
 ```
-epoxy <target> [routeFile] [options]
+Usage: epoxy <target> [routeFile] [options]
 
-target     Path to static directory
-routeFile  Path to cjs router script (can use ES6 with --build option)
+Serve the provided static folder
+
+Arguments:
+  target                 Path to static directory
+  routeFile              Path to cjs router script (can use ES6 with --build option)
 
 Options:
-      --help     Show help                                                    [boolean]
-      --version  Show version number                                          [boolean]
-  -p, --port     port to use for http server                   [string] [default: 8080]
-  -h, --host     host to use for http server              [string] [default: "0.0.0.0"]
-  -i, --index    path to index html inside of target   [string] [default: "index.html"]
-  -b, --build    build routes file in memory                 [boolean] [default: false]
-      --cache    use --no-cache to disable all route caching  [boolean] [default: true]
+  -V, --version          output the version number
+  -p, --port <port>      port to use for http server (default: 8080)
+  -h, --host <url>       host to use for http server (default: "0.0.0.0")
+  -i, --index <path>     path to index html inside of target (default: "index.html")
+  -b, --build            build routes file in memory (default: false)
+  --no-cache             disable all route handler result caching
+  --help                 display help for command
 ```
 
 #### `epoxy build`
 
 ```
-epoxy build <routeFile>
+Usage: epoxy build <routeFile> [options]
 
-routeFile  Path to ES6 router script
+Build a routes file
+
+Arguments:
+  routeFile                Path to ES6 router script
 
 Options:
-      --help       Show help                                                 [boolean]
-      --version    Show version number                                       [boolean]
-  -o, --outputDir  folder to output built routes file       [string] [default: "dist"]
+  -o, --outputDir <path>   folder to output built routes file (default: "dist")
+  -h, --help               display help for command
 ```
 
 ## Example
@@ -127,7 +137,7 @@ If you have a deployment that will need to start and stop your Epoxy server ofte
 }
 ```
 
-Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy serve` command only build if the flag `--build` is specified.
+Alternatively, you could also write your routes file in CommonJS so it doesn't require building; the `epoxy` command only builds if the flag `--build` is specified.
 
 ## API
 
@@ -156,6 +166,8 @@ Each route must have a function to handle it, which will receive a `request` obj
 ## Contributing
 
 PRs and Issues are more than welcome :)
+
+This library uses [changesets](https://github.com/changesets/changesets). If the changes you've made would constitute a version bump, run `yarn changeset` and follow the prompts to document the changes you've made. Changesets are consumed on releases, and used to generate a changelog and bump version number.
 
 ## License
 

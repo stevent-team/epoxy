@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-import yargs from 'yargs'
+import { InvalidArgumentError, program } from 'commander'
 import path from 'path'
-import { Parcel } from '@parcel/core'
+import esbuild from 'esbuild'
 
 import loadRoutes from './src/loadRoutes'
 import startServer, { Routes } from './src/server'
+import { version } from './package.json'
 
 const serve = async ({ target, routeFile, host, port, index, build, cache }) => {
   // Load routes
@@ -35,82 +36,42 @@ const serve = async ({ target, routeFile, host, port, index, build, cache }) => 
 }
 
 const build = async ({ routeFile, outputDir }) => {
-  // Setup bundler
-  const bundler = new Parcel({
-    entries: routeFile,
-    defaultConfig: '@parcel/config-default',
-    mode: 'production',
-    shouldDisableCache: true,
-    targets: {
-      'main': {
-        context: 'node',
-        distDir: outputDir,
-        engines: {
-          node: ">=10"
-        },
-        scopeHoist: false,
-        optimize: false,
-      }
-    }
-  })
-
+  const startTime = new Date().getTime()
   // Build routes configuration
-  const { buildTime } = await bundler.run()
-  console.log(`✨ Built routes file in ${buildTime}ms`)
+  await esbuild.build({
+    entryPoints: [routeFile],
+    platform: 'node',
+    outdir: outputDir,
+    bundle: true,
+    format: 'cjs',
+    external: ['./node_modules/*'],
+    target: 'node16',
+  })
+  console.log(`✨ Built routes file in ${new Date().getTime() - startTime}ms`)
 }
 
-// Use yargs to parse command line options
-yargs
-  .scriptName("epoxy")
-  .usage('$0 serve <target> [routeFile] [options]')
-  .command(
-    ['serve <target> [routeFile]', '$0 <target> [routeFile]'],
-    'Serve the provided static folder',
-    yargs => yargs
-      .positional('target', { describe: 'Path to static directory', require: true })
-      .positional('routeFile', { describe: 'Path to cjs router script (can use ES6 with --build option)' })
-      .option('port', {
-        alias: 'p',
-        type: 'string',
-        description: 'port to use for http server',
-        default: 8080,
-      })
-      .option('host', {
-        alias: 'h',
-        type: 'string',
-        description: 'host to use for http server',
-        default: '0.0.0.0',
-      })
-      .option('index', {
-        alias: 'i',
-        type: 'string',
-        description: 'path to index html inside of target',
-        default: 'index.html',
-      })
-      .option('build', {
-        alias: 'b',
-        type: 'boolean',
-        description: 'build routes file in memory',
-        default: false,
-      })
-      .option('cache', {
-        type: 'boolean',
-        description: 'use --no-cache to disable all route handler result caching',
-        default: true,
-      }),
-    serve
-  )
-  .command(
-    'build <routeFile>',
-    'Build a routes file',
-    yargs => yargs
-      .positional('routeFile', { describe: 'Path to ES6 router script', require: true })
-      .option('outputDir', {
-        alias: 'o',
-        type: 'string',
-        description: 'folder to output built routes file',
-        default: 'dist',
-      }),
-    build
-  )
-  .argv
+// Use command-line-options to parse command line options
+program
+  .name('epoxy')
+  .description('Serve the provided static folder')
+  .version(version)
+  .argument('<target>', 'Path to static directory')
+  .argument('[routeFile]', 'Path to cjs router script (can use ES6 with --build option)')
+  .option('-p, --port <port>', 'port to use for http server', v => {
+    const parsed = parseInt(v)
+    if (isNaN(parsed)) throw new InvalidArgumentError('Not a number')
+    return parsed
+  }, 8080)
+  .option('-h, --host <url>', 'host to use for http server', '0.0.0.0')
+  .option('-i, --index <path>', 'path to index html inside of target', 'index.html')
+  .option('-b, --build', 'build routes file in memory', false)
+  .option('--no-cache', 'disable all route handler result caching', true)
+  .action((target, routeFile, options) => serve({ target, routeFile, ...options }))
+
+program.command('build')
+  .description('Build a routes file')
+  .argument('<routeFile>', 'Path to ES6 router script')
+  .option('-o, --outputDir <path>', 'folder to output built routes file', 'dist')
+  .action((routeFile, options) => build({ routeFile, ...options }))
+
+program.parse()
